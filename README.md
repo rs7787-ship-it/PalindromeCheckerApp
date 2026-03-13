@@ -1,1 +1,1 @@
-# HardcodedPalindromeCheckerApp
+# CharacterArrayBasedPalindromeCheck
