@@ -1,55 +1,87 @@
 import java.util.Scanner;
+import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
-// PalindromeChecker class (Encapsulates palindrome logic)
-class PalindromeChecker {
+// Strategy interface
+interface PalindromeStrategy {
+    boolean isPalindrome(String text);
+}
 
-    // Method to check if a string is a palindrome
-    public boolean checkPalindrome(String input) {
+// Stack-based strategy
+class StackStrategy implements PalindromeStrategy {
 
-        // Convert to lowercase and remove spaces
-        input = input.replaceAll("\\s+", "").toLowerCase();
+    @Override
+    public boolean isPalindrome(String text) {
+        if (text == null) return false;
 
-        int n = input.length();
+        Stack<Character> stack = new Stack<>();
+        String cleaned = text.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
 
-        // Stack using array
-        char[] stack = new char[n];
-        int top = -1;
-
-        // Push characters to stack
-        for (int i = 0; i < n; i++) {
-            stack[++top] = input.charAt(i);
+        for (char c : cleaned.toCharArray()) {
+            stack.push(c);
         }
 
-        // Compare characters while popping
-        for (int i = 0; i < n; i++) {
-            char ch = stack[top--]; // pop
-            if (input.charAt(i) != ch) {
+        for (char c : cleaned.toCharArray()) {
+            if (c != stack.pop()) {
                 return false;
             }
         }
-
         return true;
     }
 }
 
-// Main application class
-public class UseCase11PalindromeCheckerApp {
+// Deque-based strategy
+class DequeStrategy implements PalindromeStrategy {
+
+    @Override
+    public boolean isPalindrome(String text) {
+        if (text == null) return false;
+
+        Deque<Character> deque = new ArrayDeque<>();
+        String cleaned = text.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+
+        for (char c : cleaned.toCharArray()) {
+            deque.addLast(c);
+        }
+
+        while (deque.size() > 1) {
+            if (deque.removeFirst() != deque.removeLast()) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+
+// Main app
+public class UseCase12PalindromeCheckerApp {
 
     public static void main(String[] args) {
-
         Scanner scanner = new Scanner(System.in);
-        PalindromeChecker checker = new PalindromeChecker();
 
-        System.out.println("Enter a string to check palindrome:");
+        System.out.println("Enter the string to check:");
         String input = scanner.nextLine();
 
-        boolean result = checker.checkPalindrome(input);
+        System.out.println("Choose strategy (1 = Stack, 2 = Deque):");
+        int choice = scanner.nextInt();
 
-        if (result) {
-            System.out.println("The given string is a Palindrome.");
-        } else {
-            System.out.println("The given string is NOT a Palindrome.");
+        PalindromeStrategy strategy;
+
+        switch (choice) {
+            case 1:
+                strategy = new StackStrategy();
+                break;
+            case 2:
+                strategy = new DequeStrategy();
+                break;
+            default:
+                System.out.println("Invalid choice. Using default Stack strategy.");
+                strategy = new StackStrategy();
         }
+
+        boolean result = strategy.isPalindrome(input);
+        System.out.println("Is palindrome? " + result);
 
         scanner.close();
     }
