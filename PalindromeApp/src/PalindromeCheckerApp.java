@@ -12,12 +12,12 @@ class Node {
 
 public class UseCase8PalindromeCheckerApp {
 
-    // Function to create linked list from string
-    public static Node createList(String str) {
+    // Convert string to linked list
+    public static Node createLinkedList(String str) {
         Node head = null, tail = null;
 
-        for (int i = 0; i < str.length(); i++) {
-            Node newNode = new Node(str.charAt(i));
+        for (char c : str.toCharArray()) {
+            Node newNode = new Node(c);
 
             if (head == null) {
                 head = newNode;
@@ -27,27 +27,28 @@ public class UseCase8PalindromeCheckerApp {
                 tail = newNode;
             }
         }
+
         return head;
     }
 
-    // Function to reverse a linked list
+    // Reverse linked list
     public static Node reverse(Node head) {
         Node prev = null;
-        Node curr = head;
-        Node next = null;
+        Node current = head;
 
-        while (curr != null) {
-            next = curr.next;
-            curr.next = prev;
-            prev = curr;
-            curr = next;
+        while (current != null) {
+            Node next = current.next;
+            current.next = prev;
+            prev = current;
+            current = next;
         }
 
         return prev;
     }
 
-    // Function to check palindrome
+    // Check palindrome
     public static boolean isPalindrome(Node head) {
+
         if (head == null || head.next == null)
             return true;
 
@@ -55,42 +56,50 @@ public class UseCase8PalindromeCheckerApp {
         Node fast = head;
 
         // Find middle using fast and slow pointer
-        while (fast != null && fast.next != null) {
+        while (fast.next != null && fast.next.next != null) {
             slow = slow.next;
             fast = fast.next.next;
         }
 
         // Reverse second half
-        Node secondHalf = reverse(slow);
+        Node secondHalf = reverse(slow.next);
 
         Node firstHalf = head;
-        Node temp = secondHalf;
+        Node tempSecond = secondHalf;
 
-        // Compare halves
-        while (temp != null) {
-            if (firstHalf.data != temp.data)
-                return false;
+        boolean result = true;
 
+        // Compare both halves
+        while (tempSecond != null) {
+            if (firstHalf.data != tempSecond.data) {
+                result = false;
+                break;
+            }
             firstHalf = firstHalf.next;
-            temp = temp.next;
+            tempSecond = tempSecond.next;
         }
 
-        return true;
+        // Restore list (optional)
+        slow.next = reverse(secondHalf);
+
+        return result;
     }
 
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+
+        Scanner scanner = new Scanner(System.in);
 
         System.out.print("Enter a string: ");
-        String input = sc.nextLine();
+        String input = scanner.nextLine();
 
-        Node head = createList(input);
+        Node head = createLinkedList(input);
 
-        if (isPalindrome(head))
+        if (isPalindrome(head)) {
             System.out.println("The string is a Palindrome.");
-        else
+        } else {
             System.out.println("The string is NOT a Palindrome.");
+        }
 
-        sc.close();
+        scanner.close();
     }
 }
