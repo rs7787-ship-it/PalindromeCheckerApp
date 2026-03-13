@@ -1,88 +1,65 @@
 import java.util.Scanner;
-import java.util.Stack;
-import java.util.ArrayDeque;
-import java.util.Deque;
 
-// Strategy interface
-interface PalindromeStrategy {
-    boolean isPalindrome(String text);
-}
+public class UseCase13PalindromeCheckerApp {
 
-// Stack-based strategy
-class StackStrategy implements PalindromeStrategy {
+    // Approach 1: Reverse string and compare
+    public static boolean isPalindromeReverse(String str) {
+        String reversed = new StringBuilder(str).reverse().toString();
+        return str.equals(reversed);
+    }
 
-    @Override
-    public boolean isPalindrome(String text) {
-        if (text == null) return false;
+    // Approach 2: Two-pointer technique
+    public static boolean isPalindromeTwoPointer(String str) {
+        int left = 0;
+        int right = str.length() - 1;
 
-        Stack<Character> stack = new Stack<>();
-        String cleaned = text.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-
-        for (char c : cleaned.toCharArray()) {
-            stack.push(c);
-        }
-
-        for (char c : cleaned.toCharArray()) {
-            if (c != stack.pop()) {
+        while (left < right) {
+            if (str.charAt(left) != str.charAt(right)) {
                 return false;
             }
+            left++;
+            right--;
         }
         return true;
     }
-}
 
-// Deque-based strategy
-class DequeStrategy implements PalindromeStrategy {
-
-    @Override
-    public boolean isPalindrome(String text) {
-        if (text == null) return false;
-
-        Deque<Character> deque = new ArrayDeque<>();
-        String cleaned = text.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-
-        for (char c : cleaned.toCharArray()) {
-            deque.addLast(c);
+    // Approach 3: Recursive method
+    public static boolean isPalindromeRecursive(String str, int left, int right) {
+        if (left >= right) {
+            return true;
         }
-
-        while (deque.size() > 1) {
-            if (deque.removeFirst() != deque.removeLast()) {
-                return false;
-            }
+        if (str.charAt(left) != str.charAt(right)) {
+            return false;
         }
-        return true;
+        return isPalindromeRecursive(str, left + 1, right - 1);
     }
-}
-
-// Main app
-public class UseCase12PalindromeCheckerApp {
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        Scanner sc = new Scanner(System.in);
 
-        System.out.println("Enter the string to check:");
-        String input = scanner.nextLine();
+        System.out.print("Enter a string to check palindrome: ");
+        String input = sc.nextLine();
 
-        System.out.println("Choose strategy (1 = Stack, 2 = Deque):");
-        int choice = scanner.nextInt();
+        System.out.println("\n--- Palindrome Results ---");
 
-        PalindromeStrategy strategy;
+        // Measure time for Reverse method
+        long startTime = System.nanoTime();
+        boolean resultReverse = isPalindromeReverse(input);
+        long endTime = System.nanoTime();
+        System.out.println("Reverse Method: " + resultReverse + " | Time: " + (endTime - startTime) + " ns");
 
-        switch (choice) {
-            case 1:
-                strategy = new StackStrategy();
-                break;
-            case 2:
-                strategy = new DequeStrategy();
-                break;
-            default:
-                System.out.println("Invalid choice. Using default Stack strategy.");
-                strategy = new StackStrategy();
-        }
+        // Measure time for Two-pointer method
+        startTime = System.nanoTime();
+        boolean resultTwoPointer = isPalindromeTwoPointer(input);
+        endTime = System.nanoTime();
+        System.out.println("Two-pointer Method: " + resultTwoPointer + " | Time: " + (endTime - startTime) + " ns");
 
-        boolean result = strategy.isPalindrome(input);
-        System.out.println("Is palindrome? " + result);
+        // Measure time for Recursive method
+        startTime = System.nanoTime();
+        boolean resultRecursive = isPalindromeRecursive(input, 0, input.length() - 1);
+        endTime = System.nanoTime();
+        System.out.println("Recursive Method: " + resultRecursive + " | Time: " + (endTime - startTime) + " ns");
 
-        scanner.close();
+        sc.close();
     }
 }
