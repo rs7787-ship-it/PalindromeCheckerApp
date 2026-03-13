@@ -1,1 +1,1 @@
-# PalindromeCheckerApp
+# PalindromeCheckUsingStringReverse
